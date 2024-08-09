@@ -4,17 +4,22 @@ const bodyParser =  require('body-parser');
 const { PORT }= require('./config/serverConfig');
 
 // const { sendBasicEmail } = require("./services/email-service");
+const TicketController = require('./controllers/ticket-controller');
 
-const cron = require('node-cron');
+
+const jobs = require('./utils/job');
 
 const setupAndStartServer = () => {
     const app = express();
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true}));
 
+
+    app.post('/api/v1/tickets', TicketController.create );
+
     app.listen(PORT, () => {
         console.log(`Server running on PORT: ${ PORT }`);
-    
+        jobs();
         // sendBasicEmail(
         //      'support@admin.com',
         //      'mathcrayon12@gmail.com',
@@ -22,9 +27,7 @@ const setupAndStartServer = () => {
         //      'aur bhai kya haal chal'
         // )
 
-        cron.schedule('*/2 * * * *', () => {
-            console.log('Running a task every two minutes');
-        });
+   
 
     })
 
